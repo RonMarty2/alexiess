@@ -10,11 +10,14 @@ import com.aliexpressclone.app.data.repository.ReviewRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class ProductDetailViewModel(
-    productRepository: ProductRepository,
+    private val productRepository: ProductRepository,
     private val cartRepository: CartRepository,
     reviewRepository: ReviewRepository,
     private val userId: Long,
@@ -26,6 +29,16 @@ class ProductDetailViewModel(
 
     val reviews: StateFlow<List<Review>> = reviewRepository.observeForProduct(productId)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val relatedProducts: StateFlow<List<Product>> = product.flatMapLatest { current ->
+        if (current == null) {
+            flowOf(emptyList())
+        } else {
+            productRepository.observeAllProducts().map { all ->
+                all.filter { it.categoryId == current.categoryId && it.id != current.id }.take(10)
+            }
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     private val _quantity = MutableStateFlow(1)
     val quantity: StateFlow<Int> = _quantity

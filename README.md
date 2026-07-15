@@ -63,6 +63,9 @@ directo "Entrar como Administrador" / "Entrar como Comprador" en el login.
   - Ponerle a cada artículo comprado una **foto real** y una **descripción real**
     de lo que efectivamente se envió.
   - Cambiar la fecha de compra del pedido (o dejarla igual).
+  - Ponerle un **número de rastreo real** al pedido (un solo campo que se
+    actualiza, no se acumula), que el comprador ve destacado arriba del
+    seguimiento, como en AliExpress.
 - **Reiniciar pedidos y carritos de prueba** desde el panel: borra únicamente
   datos transaccionales (pedidos, seguimiento, carritos) y restaura el stock
   que esos pedidos habían reservado. Nunca toca productos, vendedores ni fotos,
@@ -78,6 +81,11 @@ siguen funcionando aunque borres la foto original de la galería.
 Al comprar, el stock del producto baja automáticamente; y cada comprador
 puede calificar (estrellas + comentario) los productos de un pedido ya
 Finalizado, visibles luego en el detalle de cada producto.
+
+Tocar un artículo dentro de un pedido lleva directo a la página de ese
+producto, y el detalle de producto muestra una fila de "También te puede
+interesar" con otros productos de la misma categoría, para que no se sienta
+vacío aunque todavía le falten fotos reales a varios productos.
 
 ## Estructura del código
 

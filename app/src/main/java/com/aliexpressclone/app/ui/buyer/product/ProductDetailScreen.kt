@@ -1,13 +1,17 @@
 package com.aliexpressclone.app.ui.buyer.product
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -32,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.aliexpressclone.app.ui.components.ProductCard
 import com.aliexpressclone.app.ui.components.ProductImage
 import com.aliexpressclone.app.ui.theme.AliDiscountRed
 import com.aliexpressclone.app.util.formatPrice
@@ -44,12 +49,14 @@ fun ProductDetailScreen(
     viewModel: ProductDetailViewModel,
     onBack: () -> Unit,
     onStoreClick: (String) -> Unit,
-    onBuyNow: () -> Unit
+    onBuyNow: () -> Unit,
+    onProductClick: (Long) -> Unit
 ) {
     val product by viewModel.product.collectAsStateWithLifecycle()
     val quantity by viewModel.quantity.collectAsStateWithLifecycle()
     val addedToCart by viewModel.addedToCart.collectAsStateWithLifecycle()
     val reviews by viewModel.reviews.collectAsStateWithLifecycle()
+    val relatedProducts by viewModel.relatedProducts.collectAsStateWithLifecycle()
 
     LaunchedEffect(addedToCart) {
         if (addedToCart) {
@@ -215,6 +222,31 @@ fun ProductDetailScreen(
                     Text(text = "$quantity", style = MaterialTheme.typography.titleSmall)
                     OutlinedButton(onClick = { viewModel.increaseQuantity() }) { Text("+") }
                 }
+            }
+
+            if (relatedProducts.isNotEmpty()) {
+                Divider(modifier = Modifier.padding(vertical = 12.dp))
+                Text(
+                    text = "También te puede interesar",
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState())
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    relatedProducts.forEach { related ->
+                        ProductCard(
+                            product = related,
+                            onClick = { onProductClick(related.id) },
+                            modifier = Modifier.width(150.dp)
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(8.dp))
             }
         }
     }

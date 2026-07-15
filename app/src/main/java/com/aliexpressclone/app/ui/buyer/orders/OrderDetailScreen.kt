@@ -1,5 +1,6 @@
 package com.aliexpressclone.app.ui.buyer.orders
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -43,7 +44,8 @@ import com.aliexpressclone.app.util.formatPrice
 @Composable
 fun OrderDetailScreen(
     viewModel: OrderDetailViewModel,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onProductClick: (Long) -> Unit
 ) {
     val order by viewModel.order.collectAsStateWithLifecycle()
     val items by viewModel.items.collectAsStateWithLifecycle()
@@ -78,6 +80,18 @@ fun OrderDetailScreen(
                     modifier = Modifier.padding(top = 6.dp)
                 )
             }
+            if (!currentOrder.trackingNumber.isNullOrBlank()) {
+                Text(
+                    text = "Número de rastreo",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                    modifier = Modifier.padding(top = 10.dp)
+                )
+                Text(
+                    text = currentOrder.trackingNumber,
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
 
             Divider(modifier = Modifier.padding(vertical = 16.dp))
 
@@ -103,7 +117,12 @@ fun OrderDetailScreen(
 
             Text("Artículos", style = MaterialTheme.typography.titleSmall)
             items.forEach { item ->
-                Row(modifier = Modifier.fillMaxWidth().padding(top = 10.dp)) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp)
+                        .clickable { onProductClick(item.productId) }
+                ) {
                     ProductImage(
                         imageUri = item.imageUri,
                         emoji = item.placeholderEmoji,

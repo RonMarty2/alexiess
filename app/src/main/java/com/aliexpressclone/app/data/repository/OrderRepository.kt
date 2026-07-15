@@ -84,18 +84,25 @@ class OrderRepository(
 
     suspend fun updateStatus(order: Order, newStatus: OrderStatus, note: String, estimatedDeliveryDate: Long?) {
         orderDao.updateOrder(order.copy(status = newStatus, estimatedDeliveryDate = estimatedDeliveryDate))
-        orderDao.insertTrackingEvent(
-            OrderTrackingEvent(
-                orderId = order.id,
-                status = newStatus,
-                date = System.currentTimeMillis(),
-                note = note
+        val statusChanged = newStatus != order.status
+        if (statusChanged || note.isNotBlank()) {
+            orderDao.insertTrackingEvent(
+                OrderTrackingEvent(
+                    orderId = order.id,
+                    status = newStatus,
+                    date = System.currentTimeMillis(),
+                    note = note.ifBlank { "Actualizado por el administrador: ${newStatus.label}." }
+                )
             )
-        )
+        }
     }
 
     suspend fun updateOrderDate(order: Order, newDateMillis: Long) {
         orderDao.updateOrder(order.copy(createdAt = newDateMillis))
+    }
+
+    suspend fun updateTrackingNumber(order: Order, trackingNumber: String?) {
+        orderDao.updateOrder(order.copy(trackingNumber = trackingNumber))
     }
 
     suspend fun updateItemFulfillment(item: OrderItem, imageUri: String?, realDescription: String?) {

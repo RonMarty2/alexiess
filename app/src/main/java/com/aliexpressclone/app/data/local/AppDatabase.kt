@@ -34,7 +34,7 @@ import com.aliexpressclone.app.data.local.entity.User
         OrderTrackingEvent::class,
         Review::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

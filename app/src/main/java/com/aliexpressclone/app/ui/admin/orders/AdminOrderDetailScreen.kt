@@ -55,6 +55,7 @@ fun AdminOrderDetailScreen(
     val note by viewModel.note.collectAsStateWithLifecycle()
     val estimatedDays by viewModel.estimatedDays.collectAsStateWithLifecycle()
     val purchaseDateText by viewModel.purchaseDateText.collectAsStateWithLifecycle()
+    val trackingNumberText by viewModel.trackingNumberText.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
@@ -103,6 +104,30 @@ fun AdminOrderDetailScreen(
                     modifier = Modifier.padding(start = 8.dp)
                 ) {
                     Text("Guardar fecha")
+                }
+            }
+
+            Divider(modifier = Modifier.padding(vertical = 16.dp))
+
+            Text("Número de rastreo real", style = MaterialTheme.typography.titleSmall)
+            Text(
+                text = "Opcional: pon aquí un número de guía real (de un envío de verdad) para que el comprador lo vea de forma limpia, como en AliExpress.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                modifier = Modifier.padding(top = 4.dp, bottom = 8.dp)
+            )
+            Row(modifier = Modifier.fillMaxWidth()) {
+                OutlinedTextField(
+                    value = trackingNumberText,
+                    onValueChange = viewModel::updateTrackingNumberText,
+                    label = { Text("Número de guía") },
+                    modifier = Modifier.weight(1f)
+                )
+                Button(
+                    onClick = { viewModel.saveTrackingNumber() },
+                    modifier = Modifier.padding(start = 8.dp)
+                ) {
+                    Text("Guardar")
                 }
             }
 

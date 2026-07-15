@@ -137,7 +137,8 @@ fun BuyerRootScreen(userId: Long, onLogout: () -> Unit) {
                     viewModel = vm,
                     onBack = { navController.popBackStack() },
                     onStoreClick = { name -> navController.navigate(Routes.buyerStore(name)) },
-                    onBuyNow = { navController.navigate(Routes.BUYER_CHECKOUT) }
+                    onBuyNow = { navController.navigate(Routes.BUYER_CHECKOUT) },
+                    onProductClick = { id -> navController.navigate(Routes.buyerProductDetail(id)) }
                 )
             }
             composable(
@@ -193,7 +194,11 @@ fun BuyerRootScreen(userId: Long, onLogout: () -> Unit) {
                 val vm: OrderDetailViewModel = viewModel(factory = ViewModelFactory {
                     OrderDetailViewModel(app.orderRepository, app.reviewRepository, app.userRepository, userId, orderId)
                 })
-                OrderDetailScreen(viewModel = vm, onBack = { navController.popBackStack() })
+                OrderDetailScreen(
+                    viewModel = vm,
+                    onBack = { navController.popBackStack() },
+                    onProductClick = { id -> navController.navigate(Routes.buyerProductDetail(id)) }
+                )
             }
             composable(Routes.BUYER_ACCOUNT) {
                 val vm: AccountViewModel = viewModel(factory = ViewModelFactory { AccountViewModel(app.userRepository, userId) })

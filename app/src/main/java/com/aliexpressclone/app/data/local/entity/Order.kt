@@ -14,5 +14,6 @@ data class Order(
     val shippingName: String,
     val shippingPhone: String,
     val shippingAddress: String,
-    val estimatedDeliveryDate: Long?
+    val estimatedDeliveryDate: Long?,
+    val trackingNumber: String? = null
 )

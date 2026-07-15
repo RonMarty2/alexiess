@@ -45,6 +45,9 @@ class AdminOrderDetailViewModel(
     private val _purchaseDateText = MutableStateFlow("")
     val purchaseDateText: StateFlow<String> = _purchaseDateText
 
+    private val _trackingNumberText = MutableStateFlow("")
+    val trackingNumberText: StateFlow<String> = _trackingNumberText
+
     private val _updateSuccessSignal = MutableStateFlow(0)
     val updateSuccessSignal: StateFlow<Int> = _updateSuccessSignal
 
@@ -53,6 +56,7 @@ class AdminOrderDetailViewModel(
             val initialOrder = orderRepository.observeOrder(orderId).first()
             if (initialOrder != null) {
                 _purchaseDateText.value = dateInputFormat.format(initialOrder.createdAt)
+                _trackingNumberText.value = initialOrder.trackingNumber.orEmpty()
             }
         }
     }
@@ -73,6 +77,10 @@ class AdminOrderDetailViewModel(
         _purchaseDateText.value = value
     }
 
+    fun updateTrackingNumberText(value: String) {
+        _trackingNumberText.value = value
+    }
+
     fun applyUpdate() {
         val currentOrder = order.value ?: return
         val newStatus = _selectedStatus.value ?: currentOrder.status
@@ -82,11 +90,11 @@ class AdminOrderDetailViewModel(
         } else {
             System.currentTimeMillis() + TimeUnit.DAYS.toMillis(days)
         }
-        val noteText = _note.value.ifBlank { "Actualizado por el administrador: ${newStatus.label}." }
 
         viewModelScope.launch {
-            orderRepository.updateStatus(currentOrder, newStatus, noteText, estimatedDeliveryDate)
+            orderRepository.updateStatus(currentOrder, newStatus, _note.value, estimatedDeliveryDate)
             _note.value = ""
+            _selectedStatus.value = null
             _updateSuccessSignal.value += 1
         }
     }
@@ -96,6 +104,13 @@ class AdminOrderDetailViewModel(
         val parsedDate = runCatching { dateInputFormat.parse(_purchaseDateText.value) }.getOrNull() ?: return
         viewModelScope.launch {
             orderRepository.updateOrderDate(currentOrder, parsedDate.time)
+        }
+    }
+
+    fun saveTrackingNumber() {
+        val currentOrder = order.value ?: return
+        viewModelScope.launch {
+            orderRepository.updateTrackingNumber(currentOrder, _trackingNumberText.value.ifBlank { null })
         }
     }
 
