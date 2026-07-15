@@ -56,6 +56,7 @@ fun AdminOrderDetailScreen(
     val estimatedDays by viewModel.estimatedDays.collectAsStateWithLifecycle()
     val purchaseDateText by viewModel.purchaseDateText.collectAsStateWithLifecycle()
     val trackingNumberText by viewModel.trackingNumberText.collectAsStateWithLifecycle()
+    val productImageById by viewModel.productImageById.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
@@ -137,6 +138,7 @@ fun AdminOrderDetailScreen(
             items.forEach { item ->
                 OrderItemFulfillmentCard(
                     item = item,
+                    fallbackImageUri = productImageById[item.productId],
                     onPhotoPicked = { uri -> viewModel.updateItemPhoto(item, uri) },
                     onDescriptionSaved = { description -> viewModel.updateItemDescription(item, description) }
                 )
@@ -209,6 +211,7 @@ fun AdminOrderDetailScreen(
 @Composable
 private fun OrderItemFulfillmentCard(
     item: OrderItem,
+    fallbackImageUri: String?,
     onPhotoPicked: (String?) -> Unit,
     onDescriptionSaved: (String) -> Unit
 ) {
@@ -220,8 +223,8 @@ private fun OrderItemFulfillmentCard(
             Text(text = "${formatPrice(item.unitPrice)} x${item.quantity}", style = MaterialTheme.typography.bodySmall)
 
             PhotoPickerField(
-                label = "Foto real de lo enviado",
-                imageUri = item.imageUri,
+                label = "Foto real de lo enviado (si no eliges una, se usa la foto del producto)",
+                imageUri = item.imageUri ?: fallbackImageUri,
                 onImagePicked = onPhotoPicked,
                 modifier = Modifier.padding(top = 12.dp)
             )

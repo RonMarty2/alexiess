@@ -146,7 +146,7 @@ fun AdminRootScreen(userId: Long, onLogout: () -> Unit) {
             ) { entry ->
                 val orderId = entry.arguments?.getLong("orderId") ?: 0L
                 val vm: AdminOrderDetailViewModel = viewModel(factory = ViewModelFactory {
-                    AdminOrderDetailViewModel(app.orderRepository, orderId)
+                    AdminOrderDetailViewModel(app.orderRepository, app.productRepository, orderId)
                 })
                 AdminOrderDetailScreen(viewModel = vm, onBack = { navController.popBackStack() })
             }

@@ -51,6 +51,7 @@ fun OrderDetailScreen(
     val items by viewModel.items.collectAsStateWithLifecycle()
     val tracking by viewModel.tracking.collectAsStateWithLifecycle()
     val myReviews by viewModel.myReviews.collectAsStateWithLifecycle()
+    val productImageById by viewModel.productImageById.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
@@ -124,7 +125,7 @@ fun OrderDetailScreen(
                         .clickable { onProductClick(item.productId) }
                 ) {
                     ProductImage(
-                        imageUri = item.imageUri,
+                        imageUri = item.imageUri ?: productImageById[item.productId],
                         emoji = item.placeholderEmoji,
                         colorHex = item.placeholderColorHex,
                         modifier = Modifier.size(56.dp)

@@ -7,9 +7,11 @@ import com.aliexpressclone.app.data.local.entity.OrderItem
 import com.aliexpressclone.app.data.local.entity.OrderStatus
 import com.aliexpressclone.app.data.local.entity.OrderTrackingEvent
 import com.aliexpressclone.app.data.repository.OrderRepository
+import com.aliexpressclone.app.data.repository.ProductRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -21,6 +23,7 @@ private val dateInputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.US)
 
 class AdminOrderDetailViewModel(
     private val orderRepository: OrderRepository,
+    productRepository: ProductRepository,
     orderId: Long
 ) : ViewModel() {
 
@@ -29,6 +32,15 @@ class AdminOrderDetailViewModel(
 
     val items: StateFlow<List<OrderItem>> = orderRepository.observeItems(orderId)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    /** Falls back to the product's current catalog photo for items with no per-order photo. */
+    val productImageById: StateFlow<Map<Long, String?>> = combine(
+        items,
+        productRepository.observeAllProducts()
+    ) { orderItems, allProducts ->
+        val ids = orderItems.map { it.productId }.toSet()
+        allProducts.filter { it.id in ids }.associate { it.id to it.imageUri }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyMap())
 
     val tracking: StateFlow<List<OrderTrackingEvent>> = orderRepository.observeTracking(orderId)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())

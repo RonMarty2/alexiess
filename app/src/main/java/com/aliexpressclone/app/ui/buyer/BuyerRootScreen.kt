@@ -192,7 +192,7 @@ fun BuyerRootScreen(userId: Long, onLogout: () -> Unit) {
             ) { entry ->
                 val orderId = entry.arguments?.getLong("orderId") ?: 0L
                 val vm: OrderDetailViewModel = viewModel(factory = ViewModelFactory {
-                    OrderDetailViewModel(app.orderRepository, app.reviewRepository, app.userRepository, userId, orderId)
+                    OrderDetailViewModel(app.orderRepository, app.productRepository, app.reviewRepository, app.userRepository, userId, orderId)
                 })
                 OrderDetailScreen(
                     viewModel = vm,

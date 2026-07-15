@@ -7,15 +7,18 @@ import com.aliexpressclone.app.data.local.entity.OrderItem
 import com.aliexpressclone.app.data.local.entity.OrderTrackingEvent
 import com.aliexpressclone.app.data.local.entity.Review
 import com.aliexpressclone.app.data.repository.OrderRepository
+import com.aliexpressclone.app.data.repository.ProductRepository
 import com.aliexpressclone.app.data.repository.ReviewRepository
 import com.aliexpressclone.app.data.repository.UserRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class OrderDetailViewModel(
     orderRepository: OrderRepository,
+    productRepository: ProductRepository,
     private val reviewRepository: ReviewRepository,
     private val userRepository: UserRepository,
     private val userId: Long,
@@ -33,6 +36,15 @@ class OrderDetailViewModel(
 
     val myReviews: StateFlow<List<Review>> = reviewRepository.observeByUser(userId)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    /** Falls back to the product's current catalog photo for items with no per-order photo. */
+    val productImageById: StateFlow<Map<Long, String?>> = combine(
+        items,
+        productRepository.observeAllProducts()
+    ) { orderItems, allProducts ->
+        val ids = orderItems.map { it.productId }.toSet()
+        allProducts.filter { it.id in ids }.associate { it.id to it.imageUri }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyMap())
 
     fun submitReview(productId: Long, rating: Float, comment: String) {
         viewModelScope.launch {
