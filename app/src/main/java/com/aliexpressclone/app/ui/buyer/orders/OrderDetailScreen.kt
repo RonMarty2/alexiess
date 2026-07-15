@@ -24,7 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aliexpressclone.app.ui.components.OrderStatusBadge
-import com.aliexpressclone.app.ui.components.PlaceholderImage
+import com.aliexpressclone.app.ui.components.ProductImage
 import com.aliexpressclone.app.util.formatDate
 import com.aliexpressclone.app.util.formatPrice
 
@@ -92,7 +92,8 @@ fun OrderDetailScreen(
             Text("Artículos", style = MaterialTheme.typography.titleSmall)
             items.forEach { item ->
                 Row(modifier = Modifier.fillMaxWidth().padding(top = 10.dp)) {
-                    PlaceholderImage(
+                    ProductImage(
+                        imageUri = item.imageUri,
                         emoji = item.placeholderEmoji,
                         colorHex = item.placeholderColorHex,
                         modifier = Modifier.size(56.dp)
@@ -101,6 +102,13 @@ fun OrderDetailScreen(
                         Text(text = item.storeName, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
                         Text(text = item.productName, style = MaterialTheme.typography.bodyMedium, maxLines = 2)
                         Text(text = "${formatPrice(item.unitPrice)} x${item.quantity}", style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 2.dp))
+                        if (!item.realDescription.isNullOrBlank()) {
+                            Text(
+                                text = item.realDescription,
+                                style = MaterialTheme.typography.bodySmall,
+                                modifier = Modifier.padding(top = 4.dp)
+                            )
+                        }
                     }
                 }
             }

@@ -18,7 +18,8 @@ data class CartItemWithProduct(
     val storeName: String,
     val stock: Int,
     val placeholderEmoji: String,
-    val placeholderColorHex: String
+    val placeholderColorHex: String,
+    val imageUri: String?
 )
 
 @Dao
@@ -43,7 +44,8 @@ interface CartDao {
         SELECT c.id AS cartItemId, c.productId AS productId, c.quantity AS quantity,
                p.name AS name, p.price AS price, p.originalPrice AS originalPrice,
                p.storeName AS storeName, p.stock AS stock,
-               p.placeholderEmoji AS placeholderEmoji, p.placeholderColorHex AS placeholderColorHex
+               p.placeholderEmoji AS placeholderEmoji, p.placeholderColorHex AS placeholderColorHex,
+               p.imageUri AS imageUri
         FROM cart_items c
         INNER JOIN products p ON p.id = c.productId
         WHERE c.userId = :userId

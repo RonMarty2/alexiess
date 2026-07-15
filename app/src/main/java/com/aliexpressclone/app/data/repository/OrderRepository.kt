@@ -74,4 +74,11 @@ class OrderRepository(
         )
     }
 
+    suspend fun updateOrderDate(order: Order, newDateMillis: Long) {
+        orderDao.updateOrder(order.copy(createdAt = newDateMillis))
+    }
+
+    suspend fun updateItemFulfillment(item: OrderItem, imageUri: String?, realDescription: String?) {
+        orderDao.updateOrderItem(item.copy(imageUri = imageUri, realDescription = realDescription))
+    }
 }

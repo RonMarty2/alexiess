@@ -36,7 +36,8 @@ generados).
 | Comprador     | buyer@demo.com   | buyer123   |
 
 También puedes registrar cuentas nuevas eligiendo el rol (Comprador o
-Administrador) desde la pantalla de registro.
+Administrador) desde la pantalla de registro, o usar los botones de acceso
+directo "Entrar como Administrador" / "Entrar como Comprador" en el login.
 
 ## Qué puede hacer cada rol
 
@@ -46,15 +47,25 @@ Administrador) desde la pantalla de registro.
 - Añadir productos al carrito, ajustar cantidades y simular una compra
   (dirección + "método de pago" simulado, sin cobros reales).
 - Ver "Mis pedidos" filtrado por estado y el detalle de cada pedido con su
-  línea de tiempo de seguimiento.
+  línea de tiempo de seguimiento. Si el administrador ya le puso una foto y
+  descripción reales al artículo, las ve ahí también.
 
 **Administrador**
-- Panel con resumen (productos, compradores, pedidos, ventas simuladas).
-- Crear, editar y eliminar productos (precio, precio original/descuento, stock,
-  categoría, tienda, ícono y color de marcador de posición).
-- Ver todos los pedidos de todos los compradores y actualizar su estado
-  (A pagar → Procesando → Enviado → En tránsito → Finalizado/Cancelado),
-  agregar una nota de seguimiento y ajustar la fecha estimada de entrega.
+- Panel con resumen (productos, vendedores, compradores, pedidos, ventas simuladas).
+- Crear y administrar **vendedores** (nombre, descripción, logo real elegido
+  desde la galería del celular).
+- Crear, editar y eliminar productos: precio, precio original/descuento, stock,
+  categoría, vendedor asignado, y una **foto real** elegida desde la galería
+  (si no se elige foto, se muestra un ícono de marcador de posición).
+- Ver todos los pedidos de todos los compradores y:
+  - Actualizar su estado (A pagar → Procesando → Enviado → En tránsito →
+    Finalizado/Cancelado) con nota de seguimiento y fecha estimada de entrega.
+  - Ponerle a cada artículo comprado una **foto real** y una **descripción real**
+    de lo que efectivamente se envió.
+  - Cambiar la fecha de compra del pedido (o dejarla igual).
+
+Las fotos se eligen con el selector de imágenes nativo de Android (Photo
+Picker), así que no hace falta dar permisos de almacenamiento.
 
 ## Estructura del código
 

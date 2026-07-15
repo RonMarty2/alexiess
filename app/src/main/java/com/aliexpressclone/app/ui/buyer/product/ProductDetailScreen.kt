@@ -32,7 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.aliexpressclone.app.ui.components.PlaceholderImage
+import com.aliexpressclone.app.ui.components.ProductImage
 import com.aliexpressclone.app.ui.theme.AliDiscountRed
 import com.aliexpressclone.app.util.formatPrice
 import com.aliexpressclone.app.util.formatSoldCount
@@ -107,7 +107,8 @@ fun ProductDetailScreen(
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
         ) {
-            PlaceholderImage(
+            ProductImage(
+                imageUri = current.imageUri,
                 emoji = current.placeholderEmoji,
                 colorHex = current.placeholderColorHex,
                 modifier = Modifier.fillMaxWidth().aspectRatio(1f),

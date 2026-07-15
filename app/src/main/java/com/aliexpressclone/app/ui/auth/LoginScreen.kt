@@ -10,7 +10,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -58,6 +60,31 @@ fun LoginScreen(
 
         androidx.compose.foundation.layout.Spacer(modifier = Modifier.padding(top = 24.dp))
 
+        Button(
+            onClick = { viewModel.login("admin@demo.com", "admin123", onLoginSuccess) },
+            enabled = !uiState.isLoading,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Entrar como Administrador")
+        }
+        androidx.compose.foundation.layout.Spacer(modifier = Modifier.padding(top = 8.dp))
+        Button(
+            onClick = { viewModel.login("buyer@demo.com", "buyer123", onLoginSuccess) },
+            enabled = !uiState.isLoading,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Entrar como Comprador")
+        }
+
+        androidx.compose.foundation.layout.Spacer(modifier = Modifier.padding(top = 20.dp))
+        Divider()
+        Text(
+            text = "o inicia sesión manualmente",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+            modifier = Modifier.padding(top = 12.dp, bottom = 8.dp)
+        )
+
         OutlinedTextField(
             value = email,
             onValueChange = { email = it; viewModel.clearError() },
@@ -103,13 +130,5 @@ fun LoginScreen(
         TextButton(onClick = onGoToRegister) {
             Text("¿No tienes cuenta? Regístrate")
         }
-
-        androidx.compose.foundation.layout.Spacer(modifier = Modifier.padding(top = 12.dp))
-        Text(
-            text = "Cuentas demo:\nAdmin → admin@demo.com / admin123\nComprador → buyer@demo.com / buyer123",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-            modifier = Modifier.padding(top = 8.dp)
-        )
     }
 }

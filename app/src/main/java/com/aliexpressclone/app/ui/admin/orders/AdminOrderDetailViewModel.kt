@@ -10,9 +10,14 @@ import com.aliexpressclone.app.data.repository.OrderRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
 import java.util.concurrent.TimeUnit
+
+private val dateInputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.US)
 
 class AdminOrderDetailViewModel(
     private val orderRepository: OrderRepository,
@@ -37,8 +42,20 @@ class AdminOrderDetailViewModel(
     private val _estimatedDays = MutableStateFlow("7")
     val estimatedDays: StateFlow<String> = _estimatedDays
 
+    private val _purchaseDateText = MutableStateFlow("")
+    val purchaseDateText: StateFlow<String> = _purchaseDateText
+
     private val _updateSuccessSignal = MutableStateFlow(0)
     val updateSuccessSignal: StateFlow<Int> = _updateSuccessSignal
+
+    init {
+        viewModelScope.launch {
+            val initialOrder = orderRepository.observeOrder(orderId).first()
+            if (initialOrder != null) {
+                _purchaseDateText.value = dateInputFormat.format(initialOrder.createdAt)
+            }
+        }
+    }
 
     fun selectStatus(status: OrderStatus) {
         _selectedStatus.value = status
@@ -50,6 +67,10 @@ class AdminOrderDetailViewModel(
 
     fun updateEstimatedDays(value: String) {
         _estimatedDays.value = value
+    }
+
+    fun updatePurchaseDateText(value: String) {
+        _purchaseDateText.value = value
     }
 
     fun applyUpdate() {
@@ -67,6 +88,26 @@ class AdminOrderDetailViewModel(
             orderRepository.updateStatus(currentOrder, newStatus, noteText, estimatedDeliveryDate)
             _note.value = ""
             _updateSuccessSignal.value += 1
+        }
+    }
+
+    fun savePurchaseDate() {
+        val currentOrder = order.value ?: return
+        val parsedDate = runCatching { dateInputFormat.parse(_purchaseDateText.value) }.getOrNull() ?: return
+        viewModelScope.launch {
+            orderRepository.updateOrderDate(currentOrder, parsedDate.time)
+        }
+    }
+
+    fun updateItemPhoto(item: OrderItem, imageUri: String?) {
+        viewModelScope.launch {
+            orderRepository.updateItemFulfillment(item, imageUri, item.realDescription)
+        }
+    }
+
+    fun updateItemDescription(item: OrderItem, description: String) {
+        viewModelScope.launch {
+            orderRepository.updateItemFulfillment(item, item.imageUri, description)
         }
     }
 }

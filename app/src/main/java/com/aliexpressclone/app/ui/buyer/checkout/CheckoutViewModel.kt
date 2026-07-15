@@ -90,7 +90,8 @@ class CheckoutViewModel(
                     unitPrice = item.price,
                     quantity = item.quantity,
                     placeholderEmoji = item.placeholderEmoji,
-                    placeholderColorHex = item.placeholderColorHex
+                    placeholderColorHex = item.placeholderColorHex,
+                    imageUri = item.imageUri
                 )
             }
             val total = cartSnapshot.sumOf { it.price * it.quantity }

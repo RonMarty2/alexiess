@@ -40,6 +40,10 @@ object Routes {
     const val ADMIN_PRODUCT_EDIT = "admin_product_edit/{productId}"
     fun adminProductEdit(id: Long) = "admin_product_edit/$id"
 
+    const val ADMIN_SELLERS = "admin_sellers"
+    const val ADMIN_SELLER_EDIT = "admin_seller_edit/{sellerId}"
+    fun adminSellerEdit(id: Long) = "admin_seller_edit/$id"
+
     const val ADMIN_ORDER_DETAIL = "admin_order_detail/{orderId}"
     fun adminOrderDetail(id: Long) = "admin_order_detail/$id"
 }

@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.aliexpressclone.app.ui.components.PhotoPickerField
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,7 +45,9 @@ fun AdminProductEditScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val categories by viewModel.categories.collectAsStateWithLifecycle()
+    val sellers by viewModel.sellers.collectAsStateWithLifecycle()
     var categoryMenuExpanded by remember { mutableStateOf(false) }
+    var sellerMenuExpanded by remember { mutableStateOf(false) }
 
     LaunchedEffect(state.isSaved) {
         if (state.isSaved) onSaved()
@@ -174,6 +177,49 @@ fun AdminProductEditScreen(
                     }
                 }
             }
+
+            val selectedSellerName = sellers.firstOrNull { it.id == state.sellerId }?.name ?: "Sin vendedor asignado"
+            ExposedDropdownMenuBox(
+                expanded = sellerMenuExpanded,
+                onExpandedChange = { sellerMenuExpanded = it },
+                modifier = Modifier.padding(top = 8.dp)
+            ) {
+                OutlinedTextField(
+                    value = selectedSellerName,
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text("Vendedor") },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = sellerMenuExpanded) },
+                    modifier = Modifier.menuAnchor().fillMaxWidth()
+                )
+                ExposedDropdownMenu(
+                    expanded = sellerMenuExpanded,
+                    onDismissRequest = { sellerMenuExpanded = false }
+                ) {
+                    if (sellers.isEmpty()) {
+                        DropdownMenuItem(
+                            text = { Text("Todavía no hay vendedores creados") },
+                            onClick = { sellerMenuExpanded = false }
+                        )
+                    }
+                    sellers.forEach { seller ->
+                        DropdownMenuItem(
+                            text = { Text(seller.name) },
+                            onClick = {
+                                viewModel.selectSeller(seller)
+                                sellerMenuExpanded = false
+                            }
+                        )
+                    }
+                }
+            }
+
+            PhotoPickerField(
+                label = "Foto real del producto",
+                imageUri = state.imageUri,
+                onImagePicked = { uri -> viewModel.update { it.copy(imageUri = uri) } },
+                modifier = Modifier.padding(top = 16.dp)
+            )
 
             Row(
                 modifier = Modifier.fillMaxWidth().padding(top = 8.dp),

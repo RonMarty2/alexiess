@@ -8,32 +8,37 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.aliexpressclone.app.data.local.entity.OrderItem
 import com.aliexpressclone.app.data.local.entity.OrderStatus
 import com.aliexpressclone.app.ui.components.OrderStatusBadge
-import com.aliexpressclone.app.ui.components.PlaceholderImage
+import com.aliexpressclone.app.ui.components.PhotoPickerField
 import com.aliexpressclone.app.util.formatDate
 import com.aliexpressclone.app.util.formatPrice
 
@@ -49,6 +54,7 @@ fun AdminOrderDetailScreen(
     val selectedStatus by viewModel.selectedStatus.collectAsStateWithLifecycle()
     val note by viewModel.note.collectAsStateWithLifecycle()
     val estimatedDays by viewModel.estimatedDays.collectAsStateWithLifecycle()
+    val purchaseDateText by viewModel.purchaseDateText.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
@@ -84,19 +90,31 @@ fun AdminOrderDetailScreen(
 
             Divider(modifier = Modifier.padding(vertical = 16.dp))
 
+            Text("Fecha de compra", style = MaterialTheme.typography.titleSmall)
+            Row(modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
+                OutlinedTextField(
+                    value = purchaseDateText,
+                    onValueChange = viewModel::updatePurchaseDateText,
+                    label = { Text("dd/MM/aaaa") },
+                    modifier = Modifier.weight(1f)
+                )
+                Button(
+                    onClick = { viewModel.savePurchaseDate() },
+                    modifier = Modifier.padding(start = 8.dp)
+                ) {
+                    Text("Guardar fecha")
+                }
+            }
+
+            Divider(modifier = Modifier.padding(vertical = 16.dp))
+
             Text("Artículos", style = MaterialTheme.typography.titleSmall)
             items.forEach { item ->
-                Row(modifier = Modifier.fillMaxWidth().padding(top = 10.dp)) {
-                    PlaceholderImage(
-                        emoji = item.placeholderEmoji,
-                        colorHex = item.placeholderColorHex,
-                        modifier = Modifier.size(48.dp)
-                    )
-                    Column(modifier = Modifier.padding(start = 12.dp)) {
-                        Text(text = item.productName, style = MaterialTheme.typography.bodyMedium, maxLines = 2)
-                        Text(text = "${formatPrice(item.unitPrice)} x${item.quantity}", style = MaterialTheme.typography.bodySmall)
-                    }
-                }
+                OrderItemFulfillmentCard(
+                    item = item,
+                    onPhotoPicked = { uri -> viewModel.updateItemPhoto(item, uri) },
+                    onDescriptionSaved = { description -> viewModel.updateItemDescription(item, description) }
+                )
             }
 
             Divider(modifier = Modifier.padding(vertical = 16.dp))
@@ -158,6 +176,42 @@ fun AdminOrderDetailScreen(
                         Text(text = event.note, style = MaterialTheme.typography.bodySmall)
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun OrderItemFulfillmentCard(
+    item: OrderItem,
+    onPhotoPicked: (String?) -> Unit,
+    onDescriptionSaved: (String) -> Unit
+) {
+    var descriptionText by remember(item.id) { mutableStateOf(item.realDescription.orEmpty()) }
+
+    Card(modifier = Modifier.fillMaxWidth().padding(top = 10.dp)) {
+        Column(modifier = Modifier.padding(12.dp)) {
+            Text(text = item.productName, style = MaterialTheme.typography.bodyMedium, maxLines = 2)
+            Text(text = "${formatPrice(item.unitPrice)} x${item.quantity}", style = MaterialTheme.typography.bodySmall)
+
+            PhotoPickerField(
+                label = "Foto real de lo enviado",
+                imageUri = item.imageUri,
+                onImagePicked = onPhotoPicked,
+                modifier = Modifier.padding(top = 12.dp)
+            )
+
+            OutlinedTextField(
+                value = descriptionText,
+                onValueChange = { descriptionText = it },
+                label = { Text("Descripción real (opcional)") },
+                modifier = Modifier.fillMaxWidth().padding(top = 12.dp)
+            )
+            OutlinedButton(
+                onClick = { onDescriptionSaved(descriptionText) },
+                modifier = Modifier.padding(top = 8.dp)
+            ) {
+                Text("Guardar descripción")
             }
         }
     }

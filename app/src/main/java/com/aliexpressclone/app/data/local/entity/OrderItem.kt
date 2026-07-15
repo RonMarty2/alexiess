@@ -13,5 +13,7 @@ data class OrderItem(
     val unitPrice: Double,
     val quantity: Int,
     val placeholderEmoji: String,
-    val placeholderColorHex: String
+    val placeholderColorHex: String,
+    val imageUri: String? = null,
+    val realDescription: String? = null
 )

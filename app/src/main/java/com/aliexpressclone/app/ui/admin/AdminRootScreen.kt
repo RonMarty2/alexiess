@@ -6,6 +6,7 @@ import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.Inventory
 import androidx.compose.material.icons.filled.ListAlt
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Store
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -34,6 +35,10 @@ import com.aliexpressclone.app.ui.admin.products.AdminProductEditScreen
 import com.aliexpressclone.app.ui.admin.products.AdminProductEditViewModel
 import com.aliexpressclone.app.ui.admin.products.AdminProductsScreen
 import com.aliexpressclone.app.ui.admin.products.AdminProductsViewModel
+import com.aliexpressclone.app.ui.admin.sellers.AdminSellerEditScreen
+import com.aliexpressclone.app.ui.admin.sellers.AdminSellerEditViewModel
+import com.aliexpressclone.app.ui.admin.sellers.AdminSellersScreen
+import com.aliexpressclone.app.ui.admin.sellers.AdminSellersViewModel
 import com.aliexpressclone.app.ui.buyer.account.AccountViewModel
 import com.aliexpressclone.app.ui.common.ViewModelFactory
 import com.aliexpressclone.app.ui.navigation.Routes
@@ -42,6 +47,7 @@ import com.aliexpressclone.app.ui.navigation.navigateToTab
 private val bottomTabs = listOf(
     Routes.ADMIN_DASHBOARD to Pair(Icons.Filled.Dashboard, "Panel"),
     Routes.ADMIN_PRODUCTS to Pair(Icons.Filled.Inventory, "Productos"),
+    Routes.ADMIN_SELLERS to Pair(Icons.Filled.Store, "Vendedores"),
     Routes.ADMIN_ORDERS to Pair(Icons.Filled.ListAlt, "Pedidos"),
     Routes.ADMIN_ACCOUNT to Pair(Icons.Filled.Person, "Cuenta")
 )
@@ -95,9 +101,31 @@ fun AdminRootScreen(userId: Long, onLogout: () -> Unit) {
             ) { entry ->
                 val productId = entry.arguments?.getLong("productId") ?: 0L
                 val vm: AdminProductEditViewModel = viewModel(factory = ViewModelFactory {
-                    AdminProductEditViewModel(app.productRepository, productId)
+                    AdminProductEditViewModel(app.productRepository, app.sellerRepository, productId)
                 })
                 AdminProductEditScreen(
+                    viewModel = vm,
+                    onBack = { navController.popBackStack() },
+                    onSaved = { navController.popBackStack() }
+                )
+            }
+            composable(Routes.ADMIN_SELLERS) {
+                val vm: AdminSellersViewModel = viewModel(factory = ViewModelFactory { AdminSellersViewModel(app.sellerRepository) })
+                AdminSellersScreen(
+                    viewModel = vm,
+                    onAddSeller = { navController.navigate(Routes.adminSellerEdit(0)) },
+                    onEditSeller = { id -> navController.navigate(Routes.adminSellerEdit(id)) }
+                )
+            }
+            composable(
+                route = Routes.ADMIN_SELLER_EDIT,
+                arguments = listOf(navArgument("sellerId") { type = NavType.LongType })
+            ) { entry ->
+                val sellerId = entry.arguments?.getLong("sellerId") ?: 0L
+                val vm: AdminSellerEditViewModel = viewModel(factory = ViewModelFactory {
+                    AdminSellerEditViewModel(app.sellerRepository, sellerId)
+                })
+                AdminSellerEditScreen(
                     viewModel = vm,
                     onBack = { navController.popBackStack() },
                     onSaved = { navController.popBackStack() }

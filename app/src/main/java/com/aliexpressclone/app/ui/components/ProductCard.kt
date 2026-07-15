@@ -46,7 +46,8 @@ fun ProductCard(
     ) {
         Column {
             Box(modifier = Modifier.fillMaxWidth().aspectRatio(1f)) {
-                PlaceholderImage(
+                ProductImage(
+                    imageUri = product.imageUri,
                     emoji = product.placeholderEmoji,
                     colorHex = product.placeholderColorHex,
                     modifier = Modifier.fillMaxWidth().aspectRatio(1f)

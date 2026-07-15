@@ -23,6 +23,9 @@ interface OrderDao {
     @Update
     suspend fun updateOrder(order: Order)
 
+    @Update
+    suspend fun updateOrderItem(item: OrderItem)
+
     @Query("SELECT * FROM orders WHERE userId = :userId ORDER BY createdAt DESC")
     fun observeOrdersForUser(userId: Long): Flow<List<Order>>
 

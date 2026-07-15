@@ -27,7 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aliexpressclone.app.data.local.dao.CartItemWithProduct
-import com.aliexpressclone.app.ui.components.PlaceholderImage
+import com.aliexpressclone.app.ui.components.ProductImage
 import com.aliexpressclone.app.util.formatPrice
 
 @Composable
@@ -87,7 +87,8 @@ private fun CartRow(
         modifier = Modifier.fillMaxWidth().padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        PlaceholderImage(
+        ProductImage(
+            imageUri = item.imageUri,
             emoji = item.placeholderEmoji,
             colorHex = item.placeholderColorHex,
             modifier = Modifier.size(72.dp)
