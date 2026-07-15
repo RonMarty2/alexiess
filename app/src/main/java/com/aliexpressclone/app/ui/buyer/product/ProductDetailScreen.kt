@@ -49,6 +49,7 @@ fun ProductDetailScreen(
     val product by viewModel.product.collectAsStateWithLifecycle()
     val quantity by viewModel.quantity.collectAsStateWithLifecycle()
     val addedToCart by viewModel.addedToCart.collectAsStateWithLifecycle()
+    val reviews by viewModel.reviews.collectAsStateWithLifecycle()
 
     LaunchedEffect(addedToCart) {
         if (addedToCart) {
@@ -177,6 +178,30 @@ fun ProductDetailScreen(
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(top = 4.dp)
                 )
+
+                Divider(modifier = Modifier.padding(vertical = 12.dp))
+
+                Text(text = "Reseñas de compradores (${reviews.size})", style = MaterialTheme.typography.titleSmall)
+                if (reviews.isEmpty()) {
+                    Text(
+                        text = "Todavía no hay reseñas para este producto.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                } else {
+                    reviews.forEach { review ->
+                        Column(modifier = Modifier.padding(top = 10.dp)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Filled.Star, contentDescription = null, tint = androidx.compose.ui.graphics.Color(0xFFFFB300))
+                                Text(text = " ${review.rating} · ${review.buyerName}", style = MaterialTheme.typography.bodyMedium)
+                            }
+                            if (review.comment.isNotBlank()) {
+                                Text(text = review.comment, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 2.dp))
+                            }
+                        }
+                    }
+                }
 
                 Divider(modifier = Modifier.padding(vertical = 12.dp))
 

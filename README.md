@@ -63,9 +63,21 @@ directo "Entrar como Administrador" / "Entrar como Comprador" en el login.
   - Ponerle a cada artículo comprado una **foto real** y una **descripción real**
     de lo que efectivamente se envió.
   - Cambiar la fecha de compra del pedido (o dejarla igual).
+- **Reiniciar pedidos y carritos de prueba** desde el panel: borra únicamente
+  datos transaccionales (pedidos, seguimiento, carritos) y restaura el stock
+  que esos pedidos habían reservado. Nunca toca productos, vendedores ni fotos,
+  así que se puede demostrar la app varias veces sin perder el catálogo armado.
+- **Exportar catálogo**: genera un archivo JSON con vendedores, categorías,
+  productos y sus fotos (en base64) para guardarlo como respaldo permanente
+  fuera del celular.
 
 Las fotos se eligen con el selector de imágenes nativo de Android (Photo
-Picker), así que no hace falta dar permisos de almacenamiento.
+Picker, sin pedir permisos) y la app guarda su propia copia interna, así que
+siguen funcionando aunque borres la foto original de la galería.
+
+Al comprar, el stock del producto baja automáticamente; y cada comprador
+puede calificar (estrellas + comentario) los productos de un pedido ya
+Finalizado, visibles luego en el detalle de cada producto.
 
 ## Estructura del código
 

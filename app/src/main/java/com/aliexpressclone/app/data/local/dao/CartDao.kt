@@ -36,6 +36,9 @@ interface CartDao {
     @Query("DELETE FROM cart_items WHERE userId = :userId")
     suspend fun clearForUser(userId: Long)
 
+    @Query("DELETE FROM cart_items")
+    suspend fun clearAll()
+
     @Query("SELECT * FROM cart_items WHERE userId = :userId AND productId = :productId LIMIT 1")
     suspend fun findForProduct(userId: Long, productId: Long): CartItem?
 

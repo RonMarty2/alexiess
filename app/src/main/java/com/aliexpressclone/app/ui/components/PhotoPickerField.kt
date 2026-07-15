@@ -12,9 +12,15 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.aliexpressclone.app.util.ImageStorage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun PhotoPickerField(
@@ -23,9 +29,18 @@ fun PhotoPickerField(
     onImagePicked: (String?) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
-    ) { uri -> onImagePicked(uri?.toString()) }
+    ) { uri ->
+        if (uri == null) return@rememberLauncherForActivityResult
+        scope.launch {
+            val savedPath = withContext(Dispatchers.IO) { ImageStorage.copyToInternalStorage(context, uri) }
+            onImagePicked(savedPath)
+        }
+    }
 
     Column(modifier = modifier) {
         Text(text = label, style = MaterialTheme.typography.titleSmall)

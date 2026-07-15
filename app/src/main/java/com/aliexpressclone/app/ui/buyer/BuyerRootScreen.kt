@@ -131,7 +131,7 @@ fun BuyerRootScreen(userId: Long, onLogout: () -> Unit) {
             ) { entry ->
                 val productId = entry.arguments?.getLong("productId") ?: 0L
                 val vm: ProductDetailViewModel = viewModel(factory = ViewModelFactory {
-                    ProductDetailViewModel(app.productRepository, app.cartRepository, userId, productId)
+                    ProductDetailViewModel(app.productRepository, app.cartRepository, app.reviewRepository, userId, productId)
                 })
                 ProductDetailScreen(
                     viewModel = vm,
@@ -190,7 +190,9 @@ fun BuyerRootScreen(userId: Long, onLogout: () -> Unit) {
                 arguments = listOf(navArgument("orderId") { type = NavType.LongType })
             ) { entry ->
                 val orderId = entry.arguments?.getLong("orderId") ?: 0L
-                val vm: OrderDetailViewModel = viewModel(factory = ViewModelFactory { OrderDetailViewModel(app.orderRepository, orderId) })
+                val vm: OrderDetailViewModel = viewModel(factory = ViewModelFactory {
+                    OrderDetailViewModel(app.orderRepository, app.reviewRepository, app.userRepository, userId, orderId)
+                })
                 OrderDetailScreen(viewModel = vm, onBack = { navController.popBackStack() })
             }
             composable(Routes.BUYER_ACCOUNT) {

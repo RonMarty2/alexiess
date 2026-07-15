@@ -83,7 +83,7 @@ fun AdminRootScreen(userId: Long, onLogout: () -> Unit) {
         ) {
             composable(Routes.ADMIN_DASHBOARD) {
                 val vm: AdminDashboardViewModel = viewModel(factory = ViewModelFactory {
-                    AdminDashboardViewModel(app.productRepository, app.orderRepository, app.userRepository)
+                    AdminDashboardViewModel(app.productRepository, app.orderRepository, app.sellerRepository, app.userRepository)
                 })
                 AdminDashboardScreen(viewModel = vm)
             }

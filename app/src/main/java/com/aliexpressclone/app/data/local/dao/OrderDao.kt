@@ -40,4 +40,13 @@ interface OrderDao {
 
     @Query("SELECT * FROM order_tracking WHERE orderId = :orderId ORDER BY date ASC")
     fun observeTrackingForOrder(orderId: Long): Flow<List<OrderTrackingEvent>>
+
+    @Query("DELETE FROM order_tracking")
+    suspend fun deleteAllTracking()
+
+    @Query("DELETE FROM order_items")
+    suspend fun deleteAllOrderItems()
+
+    @Query("DELETE FROM orders")
+    suspend fun deleteAllOrders()
 }

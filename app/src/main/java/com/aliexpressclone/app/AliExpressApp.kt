@@ -5,6 +5,7 @@ import com.aliexpressclone.app.data.local.AppDatabase
 import com.aliexpressclone.app.data.repository.CartRepository
 import com.aliexpressclone.app.data.repository.OrderRepository
 import com.aliexpressclone.app.data.repository.ProductRepository
+import com.aliexpressclone.app.data.repository.ReviewRepository
 import com.aliexpressclone.app.data.repository.SellerRepository
 import com.aliexpressclone.app.data.repository.UserRepository
 import com.aliexpressclone.app.data.seed.Seeder
@@ -25,8 +26,9 @@ class AliExpressApp : Application() {
     val userRepository by lazy { UserRepository(database.userDao()) }
     val productRepository by lazy { ProductRepository(database.productDao(), database.categoryDao()) }
     val sellerRepository by lazy { SellerRepository(database.sellerDao()) }
+    val reviewRepository by lazy { ReviewRepository(database.reviewDao()) }
     val cartRepository by lazy { CartRepository(database.cartDao()) }
-    val orderRepository by lazy { OrderRepository(database.orderDao(), database.cartDao()) }
+    val orderRepository by lazy { OrderRepository(database.orderDao(), database.cartDao(), database.productDao()) }
 
     override fun onCreate() {
         super.onCreate()

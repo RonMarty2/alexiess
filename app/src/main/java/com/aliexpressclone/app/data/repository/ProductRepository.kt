@@ -27,4 +27,6 @@ class ProductRepository(
     suspend fun deleteProduct(product: Product) = productDao.delete(product)
 
     suspend fun getCategories(): List<Category> = categoryDao.getAll()
+
+    suspend fun getAllProducts(): List<Product> = productDao.getAllSnapshot()
 }
